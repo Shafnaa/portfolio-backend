@@ -6,7 +6,7 @@ from typing import Optional, TypedDict
 from langchain_core.documents import Document
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from langchain_openai import ChatOpenAI
-from langchain_nvidia import NVIDIAEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_postgres import PGVector
 from langgraph.graph import StateGraph, END
 from pydantic import BaseModel, Field
@@ -40,10 +40,11 @@ def build_graph():
     DB_USER = os.getenv("DB_USER")
     DB_PASSWORD = os.getenv("DB_PASSWORD")
 
-    embeddings = NVIDIAEmbeddings(
+    embeddings = OpenAIEmbeddings(
         model=OPENAI_EMBEDDINGS_MODEL,
-        api_key=OPENAI_API_KEY,
         base_url=OPENAI_BASE_URL,
+        api_key=OPENAI_API_KEY,
+        check_embedding_ctx_length=False,
     )
 
     connection = f"postgresql+psycopg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"

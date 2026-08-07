@@ -11,4 +11,6 @@ Pipfile
 /portfolio/data/*
 .*_secret_key
 
+.venv
+
 .env.local

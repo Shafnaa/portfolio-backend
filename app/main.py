@@ -3,12 +3,13 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from dotenv import load_dotenv
+
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from portfolio.agent import build_graph
+from fastapi.middleware.cors import CORSMiddleware
 
+from app.agent import build_graph
 
 _graph = None
 
@@ -16,9 +17,7 @@ _graph = None
 def get_graph():
     global _graph
     if _graph is None:
-        load_dotenv(
-            os.path.join(os.path.dirname(__file__), "..", "..", ".env.local")
-        )
+        load_dotenv(os.path.join(os.path.dirname(__file__), "..", "..", ".env.local"))
         _graph = build_graph()
     return _graph
 
@@ -70,9 +69,7 @@ async def chat(request: ChatRequest):
     state = get_graph().invoke({"question": question})
     return ChatResponse(
         choices=[
-            Choice(
-                message=ChatMessage(role="assistant", content=state["final_answer"])
-            )
+            Choice(message=ChatMessage(role="assistant", content=state["final_answer"]))
         ]
     )
 
@@ -80,3 +77,9 @@ async def chat(request: ChatRequest):
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
